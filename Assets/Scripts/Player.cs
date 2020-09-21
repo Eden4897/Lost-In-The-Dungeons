@@ -14,27 +14,37 @@ public class Player : MonoBehaviour
 
     [HideInInspector] public bool _isMoving = false;
     private Animator animator;
+    private GridManager grid;
     private void Start()
     {
+        grid = GridManager.instance;
         animator = GetComponent<Animator>();
     }
     private void Update()
     {
         transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.y);
     }
-    public IEnumerator Move(Vector3 target)
+    public IEnumerator Move(Vector2 target)
     {
+        transform.parent = null;
         _isMoving = true;
-        Vector3 start = transform.position;
+        Vector2 start = transform.position;
         float t = 0;
-        while ((Vector2)transform.position != (Vector2)target)
+        while ((Vector2)transform.position != target)
         {
             t += Time.deltaTime;
-            transform.position = Vector3.Lerp(start, target, t * speed);
+            transform.position = Vector2.Lerp(start, target, t * speed);
             yield return null;
         }
         _isMoving = false;
-        position = new Vector2Int((int)(target.x - 0.5f), (int)(target.y - 1f));
+        position = new Vector2Int(Mathf.RoundToInt(target.x - 0.5f), Mathf.RoundToInt(target.y - 1f));
+        foreach (Platform platform in grid.platforms)
+        {
+            if(platform.position == position && platform.isStationary)
+            {
+                transform.parent = platform.transform;
+            }
+        }
         animator.Play(Idle);
     }
 

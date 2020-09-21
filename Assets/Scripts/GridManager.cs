@@ -5,6 +5,7 @@ using UnityEngine.Tilemaps;
 
 public class GridManager : MonoBehaviour
 {
+    public static GridManager instance;
     [SerializeField] public Tilemap wallTilemap;
     [SerializeField] public Tilemap tileTilemap;
 
@@ -12,9 +13,14 @@ public class GridManager : MonoBehaviour
     [SerializeField] public List<Vector2Int> tiles = new List<Vector2Int>();
 
     [HideInInspector] public Dictionary<Vector2, Lever> levers = new Dictionary<Vector2, Lever>();
+    [SerializeField] public List<Platform> platforms = new List<Platform>();
 
     private void Awake()
     {
+        if(instance == null)
+        {
+            instance = this;
+        }
         wallTilemap.CompressBounds();
         tileTilemap.CompressBounds();
         BoundsInt _wallBounds = wallTilemap.cellBounds;
@@ -39,9 +45,21 @@ public class GridManager : MonoBehaviour
                 TileBase tile = _tileTiles[x + y * _tileBounds.size.x];
                 if (tile != null)
                 {
-                    tiles.Add(new Vector2Int(x + _wallBounds.xMin, y + _wallBounds.yMin));
+                    tiles.Add(new Vector2Int(x + _tileBounds.xMin, y + _tileBounds.yMin));
                 }
             }
         }
+    }
+
+    public bool ContainsPlatform(Vector2Int pos)
+    {
+        foreach(Platform platform in platforms)
+        {
+            if(platform.position == pos && platform.isStationary)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

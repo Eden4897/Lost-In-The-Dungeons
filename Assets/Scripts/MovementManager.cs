@@ -9,11 +9,12 @@ public class MovementManager : MonoBehaviour
     [SerializeField] private Player boy;
     [SerializeField] private Player girl;
 
-    [SerializeField] private GridManager grid;
+    private GridManager grid;
     private Player player;
 
     private void Start()
     {
+        grid = GridManager.instance;
         player = boy;
     }
     private void Update()
@@ -34,6 +35,7 @@ public class MovementManager : MonoBehaviour
 
         #region Movement
         if (player._isMoving) return;
+        if (player.transform.parent != null) if (!player.GetComponentInParent<Platform>().isStationary) return;
         if (Input.GetKeyDown(KeyCode.Space))
         {
             Vector2Int[] neighbours = {player.position, new Vector2Int(player.position.x + 0, player.position.y + 1), new Vector2Int(player.position.x + 0, player.position.y - 1), new Vector2Int(player.position.x + 1, player.position.y + 0), new Vector2Int(player.position.x - 1, player.position.y + 0)};
@@ -47,26 +49,34 @@ public class MovementManager : MonoBehaviour
             }
         }
         if (Input.GetKey(KeyCode.W))
-        {
-            if (grid.walls.Contains(new Vector2Int(player.position.x + 0, player.position.y + 1))) return;
+        { 
+            Vector2Int target = new Vector2Int(player.position.x + 0, player.position.y + 1);
+            if (grid.walls.Contains(target)) return;
+            if (!grid.tiles.Contains(target) && !grid.ContainsPlatform(target)) return;
             StartCoroutine(player.Move(player.transform.position + new Vector3(0, 1, 0)));
             player.playAnimation(player.WalkUp);
         }
         else if (Input.GetKey(KeyCode.S))
         {
-            if (grid.walls.Contains(new Vector2Int(player.position.x + 0, player.position.y - 1))) return;
+            Vector2Int target = new Vector2Int(player.position.x + 0, player.position.y - 1);
+            if (grid.walls.Contains(target)) return;
+            if (!grid.tiles.Contains(target) && !grid.ContainsPlatform(target)) return;
             StartCoroutine(player.Move(player.transform.position + new Vector3(0, -1, 0)));
             player.playAnimation(player.WalkDown);
         }
         else if (Input.GetKey(KeyCode.A))
         {
-            if (grid.walls.Contains(new Vector2Int(player.position.x - 1, player.position.y + 0))) return;
+            Vector2Int target = new Vector2Int(player.position.x + -1, player.position.y + 0);
+            if (grid.walls.Contains(target)) return;
+            if (!grid.tiles.Contains(target) && !grid.ContainsPlatform(target)) return;
             StartCoroutine(player.Move(player.transform.position + new Vector3(-1, 0, 0)));
             player.playAnimation(player.WalkLeft);
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            if (grid.walls.Contains(new Vector2Int(player.position.x + 1, player.position.y + 0))) return;
+            Vector2Int target = new Vector2Int(player.position.x + 1, player.position.y + 0);
+            if (grid.walls.Contains(target)) return;
+            if (!grid.tiles.Contains(target) && !grid.ContainsPlatform(target)) return;
             StartCoroutine(player.Move(player.transform.position + new Vector3(1, 0, 0)));
             player.playAnimation(player.WalkRight);
         }

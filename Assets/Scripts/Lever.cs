@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class Lever : MonoBehaviour
 {
-    [SerializeField] private GridManager grid;
     [SerializeField] private Belt linkedBelt;
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Sprite onSprite;
     [SerializeField] private Sprite offSprite;
 
+    private GridManager grid;
+
     private bool isOn = false;
     private void Start()
     {
+        grid = GridManager.instance;
         grid.levers.Add(transform.position - new Vector3(0.5f,0.5f), this);
     }
 
