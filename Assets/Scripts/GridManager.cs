@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class Grid : MonoBehaviour
+public class GridManager : MonoBehaviour
 {
     [SerializeField] public Tilemap wallTilemap;
     [SerializeField] public Tilemap tileTilemap;
 
     [SerializeField] public List<Vector2Int> walls = new List<Vector2Int>();
     [SerializeField] public List<Vector2Int> tiles = new List<Vector2Int>();
+
+    [HideInInspector] public Dictionary<Vector2, Lever> levers = new Dictionary<Vector2, Lever>();
 
     private void Awake()
     {

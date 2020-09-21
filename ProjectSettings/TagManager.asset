@@ -47,6 +47,15 @@ TagManager:
   - name: Walls
     uniqueID: 2803158231
     locked: 0
+  - name: Belts
+    uniqueID: 726610439
+    locked: 0
+  - name: Platforms
+    uniqueID: 1044711849
+    locked: 0
+  - name: Levers
+    uniqueID: 973839049
+    locked: 0
   - name: Player
     uniqueID: 2232999269
     locked: 0

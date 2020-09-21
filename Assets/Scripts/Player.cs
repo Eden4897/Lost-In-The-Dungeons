@@ -4,11 +4,20 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [HideInInspector] public bool _isMoving = false;
-    [SerializeField] private Grid grid;
     [SerializeField] private float speed = 0;
     [SerializeField] public Vector2Int position;
+    [SerializeField] public string WalkUp;
+    [SerializeField] public string WalkDown;
+    [SerializeField] public string WalkLeft;
+    [SerializeField] public string WalkRight;
+    [SerializeField] public string Idle;
 
+    [HideInInspector] public bool _isMoving = false;
+    private Animator animator;
+    private void Start()
+    {
+        animator = GetComponent<Animator>();
+    }
     private void Update()
     {
         transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.y);
@@ -26,5 +35,11 @@ public class Player : MonoBehaviour
         }
         _isMoving = false;
         position = new Vector2Int((int)(target.x - 0.5f), (int)(target.y - 1f));
+        animator.Play(Idle);
+    }
+
+    public void playAnimation(string name)
+    {
+        animator.Play(name);
     }
 }
