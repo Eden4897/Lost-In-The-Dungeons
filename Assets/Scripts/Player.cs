@@ -15,6 +15,8 @@ public class Player : MonoBehaviour
     [HideInInspector] public bool _isMoving = false;
     private Animator animator;
     private GridManager grid;
+    private PressurePlate currentPlate = null;
+
     private void Start()
     {
         grid = GridManager.instance;
@@ -24,16 +26,22 @@ public class Player : MonoBehaviour
     {
         transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.y);
     }
-    public IEnumerator Move(Vector2 target)
+    public IEnumerator Move(Vector3 target)
     {
+        target.z = target.y;
+        if(currentPlate != null)
+        {
+            currentPlate.Release();
+            currentPlate = null;
+        }
         transform.parent = null;
         _isMoving = true;
-        Vector2 start = transform.position;
+        Vector3 start = transform.position;
         float t = 0;
-        while ((Vector2)transform.position != target)
+        while (transform.position != target)
         {
             t += Time.deltaTime;
-            transform.position = Vector2.Lerp(start, target, t * speed);
+            transform.position = Vector3.Lerp(start, target, t * speed);
             yield return null;
         }
         _isMoving = false;
@@ -44,6 +52,11 @@ public class Player : MonoBehaviour
             {
                 transform.parent = platform.transform;
             }
+        }
+        if (grid.pressurePlates.ContainsKey(position))
+        {
+            currentPlate = grid.pressurePlates[position];
+            currentPlate.Step();
         }
         animator.Play(Idle);
     }

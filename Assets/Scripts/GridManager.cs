@@ -13,6 +13,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] public List<Vector2Int> tiles = new List<Vector2Int>();
 
     [HideInInspector] public Dictionary<Vector2, Lever> levers = new Dictionary<Vector2, Lever>();
+    [HideInInspector] public Dictionary<Vector2, PressurePlate> pressurePlates = new Dictionary<Vector2, PressurePlate>();
     [SerializeField] public List<Platform> platforms = new List<Platform>();
 
     private void Awake()
