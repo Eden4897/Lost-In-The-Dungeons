@@ -1,11 +1,9 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : GameElement
 {
     [SerializeField] private float speed = 0;
-    [SerializeField] public Vector2Int position;
     [SerializeField] public string WalkUp;
     [SerializeField] public string WalkDown;
     [SerializeField] public string WalkLeft;
@@ -13,29 +11,49 @@ public class Player : MonoBehaviour
     [SerializeField] public string Idle;
 
     [HideInInspector] public bool _isMoving = false;
-    private Animator animator;
+    [HideInInspector] public SpriteRenderer spriteRenderer;
+    [HideInInspector] public Animator animator;
+
     private GridManager grid;
     private PressurePlate currentPlate = null;
+    private Platform currenPlatform = null;
+    private FallingPlatform currenFallingPlatform = null;
 
-    private void Start()
+    protected override void Start()
     {
         grid = GridManager.instance;
+        spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
     }
-    private void Update()
+    protected override void Update()
     {
         transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.y);
     }
     public IEnumerator Move(Vector3 target)
     {
+        //premove
         target.z = target.y;
-        if(currentPlate != null)
+        transform.parent = null;
+        _isMoving = true;
+
+        //setting tiles
+        if (currentPlate != null)
         {
             currentPlate.Release();
             currentPlate = null;
         }
-        transform.parent = null;
-        _isMoving = true;
+        if (currenPlatform != null)
+        {
+            currenPlatform.player = null;
+            currenPlatform = null;
+        }
+        if (currenFallingPlatform != null)
+        {
+            currenFallingPlatform.Damage();
+            currenFallingPlatform = null;
+        }
+
+        //moving
         Vector3 start = transform.position;
         float t = 0;
         while (transform.position != target)
@@ -44,21 +62,31 @@ public class Player : MonoBehaviour
             transform.position = Vector3.Lerp(start, target, t * speed);
             yield return null;
         }
+
+        //promove
         _isMoving = false;
         position = new Vector2Int(Mathf.RoundToInt(target.x - 0.5f), Mathf.RoundToInt(target.y - 1f));
-        foreach (Platform platform in grid.platforms)
+        animator.Play(Idle);
+
+        //setting tiles
+        Platform platform = grid.GetPlatform(position);
+        if (platform != null)
         {
-            if(platform.position == position && platform.isStationary)
-            {
-                transform.parent = platform.transform;
-            }
+            transform.parent = platform.transform;
+            currenPlatform = platform;
+            platform.player = this;
         }
-        if (grid.pressurePlates.ContainsKey(position))
+        FallingPlatform fallingPlatform = grid.GetFallingPlatform(position);
+        if (fallingPlatform != null)
         {
-            currentPlate = grid.pressurePlates[position];
+            currenFallingPlatform = fallingPlatform;
+        }
+        PressurePlate plate = grid.GetPlate(position);
+        if (plate != null)
+        {
+            currentPlate = plate;
             currentPlate.Step();
         }
-        animator.Play(Idle);
     }
 
     public void playAnimation(string name)

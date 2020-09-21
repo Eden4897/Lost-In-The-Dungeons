@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PressurePlate : MonoBehaviour
+public class PressurePlate : GameElement
 {
     [SerializeField] private Belt linkedBelt;
     [SerializeField] private SpriteRenderer spriteRenderer;
@@ -13,10 +13,11 @@ public class PressurePlate : MonoBehaviour
 
     private int _occupants;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         grid = GridManager.instance;
-        grid.pressurePlates.Add(transform.position - new Vector3(0.5f, 0.5f), this);
+        grid.pressurePlates.Add(this);
     }
 
     public void Step()

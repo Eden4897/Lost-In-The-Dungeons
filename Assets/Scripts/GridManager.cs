@@ -12,9 +12,10 @@ public class GridManager : MonoBehaviour
     [SerializeField] public List<Vector2Int> walls = new List<Vector2Int>();
     [SerializeField] public List<Vector2Int> tiles = new List<Vector2Int>();
 
-    [HideInInspector] public Dictionary<Vector2, Lever> levers = new Dictionary<Vector2, Lever>();
-    [HideInInspector] public Dictionary<Vector2, PressurePlate> pressurePlates = new Dictionary<Vector2, PressurePlate>();
+    [HideInInspector] public List<Lever> levers = new List<Lever>();
+    [HideInInspector] public List<PressurePlate> pressurePlates = new List<PressurePlate>();
     [SerializeField] public List<Platform> platforms = new List<Platform>();
+    [SerializeField] public List<FallingPlatform> fallingPlatforms = new List<FallingPlatform>();
 
     private void Awake()
     {
@@ -52,15 +53,59 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    public bool ContainsPlatform(Vector2Int pos)
+    public bool IsWalkable(Vector2Int pos)
+    {
+        if (tiles.Contains(pos)) return true;
+        if (GetPlatform(pos) != null) return true;
+        if (GetFallingPlatform(pos) != null) return true;
+        return false;
+    }
+
+    public Platform GetPlatform(Vector2Int pos)
     {
         foreach(Platform platform in platforms)
         {
             if(platform.position == pos && platform.isStationary)
             {
-                return true;
+                return platform;
             }
         }
-        return false;
+        return null;
+    }
+
+    public FallingPlatform GetFallingPlatform(Vector2Int pos)
+    {
+        foreach (FallingPlatform fallingPlatform in fallingPlatforms)
+        {
+            if (fallingPlatform.position == pos)
+            {
+                return fallingPlatform;
+            }
+        }
+        return null;
+    }
+
+    public Lever GetLever(Vector2 pos)
+    {
+        foreach (Lever lever in levers)
+        {
+            if (lever.position == pos && lever.isStationary)
+            {
+                return lever;
+            }
+        }
+        return null;
+    }
+
+    public PressurePlate GetPlate (Vector2 pos)
+    {
+        foreach (PressurePlate pressurePlate in pressurePlates)
+        {
+            if (pressurePlate.position == pos && pressurePlate.isStationary)
+            {
+                return pressurePlate;
+            }
+        }
+        return null;
     }
 }

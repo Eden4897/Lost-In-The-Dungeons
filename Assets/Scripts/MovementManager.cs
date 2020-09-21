@@ -24,10 +24,14 @@ public class MovementManager : MonoBehaviour
         {
             if(player == boy)
             {
+                boy.spriteRenderer.color = Color.grey;
+                girl.spriteRenderer.color = Color.white;
                 player = girl;
             }
             else if (player == girl)
             {
+                girl.spriteRenderer.color = Color.grey;
+                boy.spriteRenderer.color = Color.white;
                 player = boy;
             }
         }
@@ -41,9 +45,9 @@ public class MovementManager : MonoBehaviour
             Vector2Int[] neighbours = {player.position, new Vector2Int(player.position.x + 0, player.position.y + 1), new Vector2Int(player.position.x + 0, player.position.y - 1), new Vector2Int(player.position.x + 1, player.position.y + 0), new Vector2Int(player.position.x - 1, player.position.y + 0)};
             foreach(Vector2 neighbour in neighbours)
             {
-                if (grid.levers.ContainsKey(neighbour))
+                if (grid.GetLever(neighbour) != null)
                 {
-                    grid.levers[neighbour].Flick();
+                    grid.GetLever(neighbour).Flick();
                     break;
                 }
             }
@@ -52,33 +56,34 @@ public class MovementManager : MonoBehaviour
         { 
             Vector2Int target = new Vector2Int(player.position.x + 0, player.position.y + 1);
             if (grid.walls.Contains(target)) return;
-            if (!grid.tiles.Contains(target) && !grid.ContainsPlatform(target)) return;
+            if (!grid.IsWalkable(target)) return;
             StartCoroutine(player.Move(player.transform.position + new Vector3(0, 1, 0)));
-            player.playAnimation(player.WalkUp);
+            player.animator.Play(player.WalkUp);
         }
         else if (Input.GetKey(KeyCode.S))
         {
             Vector2Int target = new Vector2Int(player.position.x + 0, player.position.y - 1);
             if (grid.walls.Contains(target)) return;
-            if (!grid.tiles.Contains(target) && !grid.ContainsPlatform(target)) return;
+            if (!grid.IsWalkable(target)) return;
+            Debug.Log("S");
             StartCoroutine(player.Move(player.transform.position + new Vector3(0, -1, 0)));
-            player.playAnimation(player.WalkDown);
+            player.animator.Play(player.WalkDown);
         }
         else if (Input.GetKey(KeyCode.A))
         {
             Vector2Int target = new Vector2Int(player.position.x + -1, player.position.y + 0);
             if (grid.walls.Contains(target)) return;
-            if (!grid.tiles.Contains(target) && !grid.ContainsPlatform(target)) return;
+            if (!grid.IsWalkable(target)) return;
             StartCoroutine(player.Move(player.transform.position + new Vector3(-1, 0, 0)));
-            player.playAnimation(player.WalkLeft);
+            player.animator.Play(player.WalkLeft);
         }
         else if (Input.GetKey(KeyCode.D))
         {
             Vector2Int target = new Vector2Int(player.position.x + 1, player.position.y + 0);
             if (grid.walls.Contains(target)) return;
-            if (!grid.tiles.Contains(target) && !grid.ContainsPlatform(target)) return;
+            if (!grid.IsWalkable(target)) return;
             StartCoroutine(player.Move(player.transform.position + new Vector3(1, 0, 0)));
-            player.playAnimation(player.WalkRight);
+            player.animator.Play(player.WalkRight);
         }
         #endregion
     }

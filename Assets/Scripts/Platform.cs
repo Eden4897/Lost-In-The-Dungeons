@@ -8,7 +8,9 @@ public class Platform : MonoBehaviour
     [SerializeField] public Vector2Int position;
     [HideInInspector] public Player player = null;
     [HideInInspector] public bool isStationary = true;
+    [SerializeField] public GameElement gameElement = null;
     private GridManager grid;
+
     private void Start()
     {
         grid = GridManager.instance;
@@ -16,8 +18,16 @@ public class Platform : MonoBehaviour
 
         position = new Vector2Int(Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.y));
     }
-    private void SetPos()
-    {
 
+    public void Moved()
+    {
+        if(player != null)
+        {
+            player.position = position;
+        }
+        if (gameElement != null)
+        {
+            gameElement.position = position;
+        }
     }
 }

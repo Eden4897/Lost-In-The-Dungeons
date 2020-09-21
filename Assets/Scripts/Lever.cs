@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Lever : MonoBehaviour
+public class Lever : GameElement
 {
     [SerializeField] private Belt linkedBelt;
     [SerializeField] private SpriteRenderer spriteRenderer;
@@ -12,10 +12,12 @@ public class Lever : MonoBehaviour
     private GridManager grid;
 
     private bool isOn = false;
-    private void Start()
+
+    protected override void Start()
     {
+        base.Start();
         grid = GridManager.instance;
-        grid.levers.Add(transform.position - new Vector3(0.5f,0.5f), this);
+        grid.levers.Add(this);
     }
 
     public void Flick()

@@ -6,7 +6,7 @@ using UnityEngine;
 public class Belt : MonoBehaviour
 {
     [SerializeField] private Transform[] beltNodes;
-    [SerializeField] private Platform Platform;
+    [SerializeField] private Platform platform;
     [SerializeField] List<Transform> Path = new List<Transform>();
 
     private Transform currentNode;
@@ -22,8 +22,8 @@ public class Belt : MonoBehaviour
 
     private void Start()
     {
-        _start = Platform.transform.position;
-        _end = Platform.transform.position;
+        _start = platform.transform.position;
+        _end = platform.transform.position;
     }
     private void Update()
     {
@@ -32,7 +32,7 @@ public class Belt : MonoBehaviour
             Move();
         }
         _time += Time.deltaTime;
-        Platform.transform.position = Vector2.Lerp(_start, _end, _time / _distance * speed);
+        platform.transform.position = Vector2.Lerp(_start, _end, _time / _distance * speed);
     }
     public void Move()
     {
@@ -41,7 +41,7 @@ public class Belt : MonoBehaviour
         {
             if (_isMoving)//moving from end to beginning
             {
-                Path.Add(Platform.transform);
+                Path.Add(platform.transform);
                 for (int i = Array.IndexOf(beltNodes, currentNode) - 1; i >= 0; --i)
                 {
                     Path.Add(beltNodes[i]);
@@ -58,7 +58,7 @@ public class Belt : MonoBehaviour
         else {
             if (_isMoving)//moving from origin to end
             {
-                Path.Add(Platform.transform);
+                Path.Add(platform.transform);
                 for (int i = Array.IndexOf(beltNodes, currentNode) + 1; i < beltNodes.Length; ++i)
                 {
                     Path.Add(beltNodes[i]);
@@ -78,7 +78,11 @@ public class Belt : MonoBehaviour
 
     private IEnumerator MoveRoutine(Transform[] Path)
     {
-        Platform.isStationary = false;
+        if(platform.gameElement != null)
+        {
+            platform.gameElement.isStationary = false;
+        }
+        platform.isStationary = false;
         _isMoving = true;
 
         for (int i = 1; i < Path.Length; ++i)
@@ -90,15 +94,20 @@ public class Belt : MonoBehaviour
             _end = Path[i].position;
             _distance = Vector3.Distance(_start, _end);
 
-            while ((Vector2)Platform.transform.position != (Vector2)Path[i].position)
+            while ((Vector2)platform.transform.position != (Vector2)Path[i].position)
             {
                 yield return null;
             }
         }
 
-        Platform.position = new Vector2Int(Mathf.FloorToInt(Path[Path.Length - 1].position.x - 0.5f), Mathf.FloorToInt(Path[Path.Length - 1].position.y - 0.5f));
+        platform.position = new Vector2Int(Mathf.FloorToInt(Path[Path.Length - 1].position.x - 0.5f), Mathf.FloorToInt(Path[Path.Length - 1].position.y - 0.5f));
+        platform.Moved();
 
-        Platform.isStationary = true;
+        if (platform.gameElement != null)
+        {
+            platform.gameElement.isStationary = true;
+        }
+        platform.isStationary = true;
         _isMoving = false;
     }
 }
