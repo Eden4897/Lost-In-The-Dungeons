@@ -9,13 +9,13 @@ public class FallingPlatform : MonoBehaviour
     [SerializeField] private int state = 2;
 
     private SpriteRenderer spriteRenderer;
-    private GridManager grid;
+    private GameManager grid;
 
     private void Start()
     {
         position.x = Mathf.RoundToInt(transform.position.x - 0.5f);
         position.y = Mathf.RoundToInt(transform.position.y - 0.5f);
-        grid = GridManager.instance;
+        grid = GameManager.instance;
         grid.fallingPlatforms.Add(this);
         spriteRenderer = GetComponent<SpriteRenderer>();
     }

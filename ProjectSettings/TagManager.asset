@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Collectables
   layers:
   - Default
   - TransparentFX
@@ -55,6 +56,9 @@ TagManager:
     locked: 0
   - name: Levers
     uniqueID: 973839049
+    locked: 0
+  - name: Collectables
+    uniqueID: 3993030095
     locked: 0
   - name: Player
     uniqueID: 2232999269

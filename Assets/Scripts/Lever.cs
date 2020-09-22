@@ -9,14 +9,11 @@ public class Lever : GameElement
     [SerializeField] private Sprite onSprite;
     [SerializeField] private Sprite offSprite;
 
-    private GridManager grid;
-
     private bool isOn = false;
 
     protected override void Start()
     {
         base.Start();
-        grid = GridManager.instance;
         grid.levers.Add(this);
     }
 

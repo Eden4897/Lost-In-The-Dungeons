@@ -14,14 +14,13 @@ public class Player : GameElement
     [HideInInspector] public SpriteRenderer spriteRenderer;
     [HideInInspector] public Animator animator;
 
-    private GridManager grid;
     private PressurePlate currentPlate = null;
     private Platform currenPlatform = null;
     private FallingPlatform currenFallingPlatform = null;
 
     protected override void Start()
     {
-        grid = GridManager.instance;
+        base.Start();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
     }
@@ -89,8 +88,14 @@ public class Player : GameElement
         }
     }
 
-    public void playAnimation(string name)
+    protected override void OnCollisionEnter2D(Collision2D collider)
     {
-        animator.Play(name);
+        Debug.Log("Bump");
+        if (collider.gameObject.CompareTag("Collectables"))
+        {
+            grid.activeCollectables--;
+            Destroy(collider.gameObject);
+            //play sound
+        }
     }
 }

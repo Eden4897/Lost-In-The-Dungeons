@@ -1,21 +1,33 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 
-public class GridManager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
-    public static GridManager instance;
+    public static GameManager instance;
+    //input
     [SerializeField] public Tilemap wallTilemap;
     [SerializeField] public Tilemap tileTilemap;
+    [SerializeField] private Gate gates;
+    [SerializeField] private Player[] players;
+    [SerializeField] private GameObject winScreen;
+    [SerializeField] private GameObject reloadScreen;
 
+    //visualised info
     [SerializeField] public List<Vector2Int> walls = new List<Vector2Int>();
     [SerializeField] public List<Vector2Int> tiles = new List<Vector2Int>();
 
+
     [HideInInspector] public List<Lever> levers = new List<Lever>();
     [HideInInspector] public List<PressurePlate> pressurePlates = new List<PressurePlate>();
-    [SerializeField] public List<Platform> platforms = new List<Platform>();
-    [SerializeField] public List<FallingPlatform> fallingPlatforms = new List<FallingPlatform>();
+    [HideInInspector] public List<Platform> platforms = new List<Platform>();
+    [HideInInspector] public List<FallingPlatform> fallingPlatforms = new List<FallingPlatform>();
+
+    [HideInInspector] public List<Vector2Int> targetTiles = new List<Vector2Int>();
+
+    public int activeCollectables = 0;
 
     private void Awake()
     {
@@ -50,6 +62,28 @@ public class GridManager : MonoBehaviour
                     tiles.Add(new Vector2Int(x + _tileBounds.xMin, y + _tileBounds.yMin));
                 }
             }
+        }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            reloadScreen.SetActive(true);
+            Invoke("ReloadScene", 0.5f);
+        }
+        if (activeCollectables <= 0)
+        {
+            gates.Open();
+        }
+        bool isDone = true;
+        foreach (Player player in players)
+        {
+            if (!targetTiles.Contains(player.position)) isDone = false;
+        }
+        if (isDone)
+        {
+            winScreen.SetActive(true);
         }
     }
 
@@ -107,5 +141,19 @@ public class GridManager : MonoBehaviour
             }
         }
         return null;
+    }
+
+    public void NextLevel()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
+    public void LoadScene(string name)
+    {
+        SceneManager.LoadScene(name);
+    }
+
+    private void ReloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

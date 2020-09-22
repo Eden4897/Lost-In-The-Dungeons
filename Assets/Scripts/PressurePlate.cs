@@ -9,14 +9,11 @@ public class PressurePlate : GameElement
     [SerializeField] private Sprite steppedSprite;
     [SerializeField] private Sprite releasedSprite;
 
-    private GridManager grid;
-
     private int _occupants;
 
     protected override void Start()
     {
         base.Start();
-        grid = GridManager.instance;
         grid.pressurePlates.Add(this);
     }
 

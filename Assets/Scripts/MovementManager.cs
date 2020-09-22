@@ -9,12 +9,12 @@ public class MovementManager : MonoBehaviour
     [SerializeField] private Player boy;
     [SerializeField] private Player girl;
 
-    private GridManager grid;
+    private GameManager grid;
     private Player player;
 
     private void Start()
     {
-        grid = GridManager.instance;
+        grid = GameManager.instance;
         player = boy;
     }
     private void Update()
@@ -65,7 +65,6 @@ public class MovementManager : MonoBehaviour
             Vector2Int target = new Vector2Int(player.position.x + 0, player.position.y - 1);
             if (grid.walls.Contains(target)) return;
             if (!grid.IsWalkable(target)) return;
-            Debug.Log("S");
             StartCoroutine(player.Move(player.transform.position + new Vector3(0, -1, 0)));
             player.animator.Play(player.WalkDown);
         }

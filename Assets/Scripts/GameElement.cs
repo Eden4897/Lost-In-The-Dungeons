@@ -5,9 +5,11 @@ using UnityEngine;
 public class GameElement : MonoBehaviour
 {
     [HideInInspector] public bool isStationary = true;
-     public Vector2Int position;
+    public Vector2Int position;
+    protected GameManager grid;
     protected virtual void Start() 
     {
+        grid = GameManager.instance;
         position = new Vector2Int(Mathf.RoundToInt(transform.position.x - 0.5f), Mathf.RoundToInt(transform.position.y - 0.5f));
     }
 
@@ -15,4 +17,6 @@ public class GameElement : MonoBehaviour
     {
         
     }
+
+    protected virtual void OnCollisionEnter2D(Collision2D collider) { }
 }

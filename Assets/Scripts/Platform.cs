@@ -9,11 +9,11 @@ public class Platform : MonoBehaviour
     [HideInInspector] public Player player = null;
     [HideInInspector] public bool isStationary = true;
     [SerializeField] public GameElement gameElement = null;
-    private GridManager grid;
+    private GameManager grid;
 
     private void Start()
     {
-        grid = GridManager.instance;
+        grid = GameManager.instance;
         grid.platforms.Add(this);
 
         position = new Vector2Int(Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.y));
