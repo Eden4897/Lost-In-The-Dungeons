@@ -54,8 +54,11 @@ TagManager:
   - name: Platforms
     uniqueID: 1044711849
     locked: 0
-  - name: Levers
+  - name: GameElements
     uniqueID: 973839049
+    locked: 0
+  - name: Lasers
+    uniqueID: 122918083
     locked: 0
   - name: Collectables
     uniqueID: 3993030095

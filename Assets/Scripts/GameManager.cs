@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public List<PressurePlate> pressurePlates = new List<PressurePlate>();
     [HideInInspector] public List<Platform> platforms = new List<Platform>();
     [HideInInspector] public List<FallingPlatform> fallingPlatforms = new List<FallingPlatform>();
+    [HideInInspector] public List<Mirror> mirrors = new List<Mirror>();
 
     [HideInInspector] public List<Vector2Int> targetTiles = new List<Vector2Int>();
 
@@ -138,6 +139,18 @@ public class GameManager : MonoBehaviour
             if (pressurePlate.position == pos && pressurePlate.isStationary)
             {
                 return pressurePlate;
+            }
+        }
+        return null;
+    }
+
+    public Mirror GetMirror(Vector2 pos)
+    {
+        foreach (Mirror mirror in mirrors)
+        {
+            if (mirror.position == pos && mirror.isStationary)
+            {
+                return mirror;
             }
         }
         return null;
