@@ -4,13 +4,9 @@ MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
-  - leftRightBeam: {fileID: 6758930158530883385, guid: 2f4c44bc19aad8e409cc7a6f69432d28,
+  - horizontalBeam: {fileID: 2005025522316488100, guid: 121b670029e1d3b4a8523f3d1b1eb380,
       type: 3}
-  - rightLeftBeam: {fileID: 7847092382491381867, guid: 363c9b24ebb964943a69ba67b0151f27,
-      type: 3}
-  - upDownBeam: {fileID: 5652902774414025344, guid: 2349775a885076641a1f4505eda478a0,
-      type: 3}
-  - downUpBeam: {fileID: 2005025522316488100, guid: 121b670029e1d3b4a8523f3d1b1eb380,
+  - verticalBeam: {fileID: 6758930158530883385, guid: 2f4c44bc19aad8e409cc7a6f69432d28,
       type: 3}
   - upEnd: {fileID: 9184656675476769210, guid: 6766f562c071417419bdb0346cdd4d05, type: 3}
   - downEnd: {fileID: 8730853500352825570, guid: 393f4e29cd35d7648b6866de624ab869,
