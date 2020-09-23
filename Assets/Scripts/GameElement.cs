@@ -15,6 +15,7 @@ public class GameElement : MonoBehaviour
 
     [HideInInspector] public bool isStationary = true;
     public Vector2Int position;
+    public bool isPushable = false;
     protected GameManager grid;
     protected virtual void Start() 
     {
@@ -26,7 +27,10 @@ public class GameElement : MonoBehaviour
 
     protected virtual void OnCollisionEnter2D(Collision2D collider) { }
 
-    protected virtual Direction Reverse(Direction dir)
+    public virtual void OnStartMove() { }
+    public virtual void OnMoved() { }
+
+    protected Direction Reverse(Direction dir)
     {
         switch (dir)
         {

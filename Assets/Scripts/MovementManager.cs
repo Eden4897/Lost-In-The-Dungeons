@@ -53,37 +53,76 @@ public class MovementManager : MonoBehaviour
             }
         }
         if (Input.GetKey(KeyCode.W))
-        { 
-            Vector2Int target = new Vector2Int(player.position.x + 0, player.position.y + 1);
-            if (grid.walls.Contains(target)) return;
-            if (!grid.IsWalkable(target)) return;
-            StartCoroutine(player.Move(player.transform.position + new Vector3(0, 1, 0)));
-            player.animator.Play(player.WalkUp);
+        {
+            Move(GameElement.Direction.Up);
         }
         else if (Input.GetKey(KeyCode.S))
         {
-            Vector2Int target = new Vector2Int(player.position.x + 0, player.position.y - 1);
-            if (grid.walls.Contains(target)) return;
-            if (!grid.IsWalkable(target)) return;
-            StartCoroutine(player.Move(player.transform.position + new Vector3(0, -1, 0)));
-            player.animator.Play(player.WalkDown);
+            Move(GameElement.Direction.Down);
+
         }
         else if (Input.GetKey(KeyCode.A))
         {
-            Vector2Int target = new Vector2Int(player.position.x + -1, player.position.y + 0);
-            if (grid.walls.Contains(target)) return;
-            if (!grid.IsWalkable(target)) return;
-            StartCoroutine(player.Move(player.transform.position + new Vector3(-1, 0, 0)));
-            player.animator.Play(player.WalkLeft);
+            Move(GameElement.Direction.Left);
+
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            Vector2Int target = new Vector2Int(player.position.x + 1, player.position.y + 0);
-            if (grid.walls.Contains(target)) return;
-            if (!grid.IsWalkable(target)) return;
-            StartCoroutine(player.Move(player.transform.position + new Vector3(1, 0, 0)));
-            player.animator.Play(player.WalkRight);
+            Move(GameElement.Direction.Right);
+
         }
         #endregion
+    }
+
+    private void Move(GameElement.Direction dir)
+    {
+        Vector2Int force = Vector2Int.zero;
+        string animationName = "";
+        switch (dir)
+        {
+            case GameElement.Direction.Up:
+                force = Vector2Int.up;
+                animationName = player.WalkUp;
+                break;
+            case GameElement.Direction.Down:
+                force = Vector2Int.down;
+                animationName = player.WalkDown;
+                break;
+            case GameElement.Direction.Left:
+                force = Vector2Int.left;
+                animationName = player.WalkLeft;
+                break;
+            case GameElement.Direction.Right:
+                force = Vector2Int.right;
+                animationName = player.WalkRight;
+                break;
+        }
+        Vector2Int target = new Vector2Int(player.position.x + force.x, player.position.y + force.y);
+        if (!grid.IsWalkable(target))
+        {
+            if (grid.IsPushable(target, dir))
+            {
+                GameElement[] gameElements = grid.GetPushTargets(target, dir);
+                foreach (GameElement gameElement in gameElements)
+                {
+                    gameElement.transform.parent = player.transform;
+
+                }
+                StartCoroutine(player.Move(player.transform.position + (Vector3Int)force, () =>
+                {
+                    foreach (GameElement gameElement in gameElements)
+                    {
+                        gameElement.transform.parent = null;
+                        gameElement.position = gameElement.position + force;
+                    }
+                }));
+                player.animator.Play(animationName);
+            }
+        }
+        else
+        {
+            StartCoroutine(player.Move(player.transform.position + (Vector3Int)force));
+            player.animator.Play(animationName);
+        }
     }
 }

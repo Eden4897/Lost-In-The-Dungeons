@@ -78,7 +78,8 @@ public class Belt : MonoBehaviour
 
     private IEnumerator MoveRoutine(Transform[] Path)
     {
-        if(platform.gameElement != null)
+        platform.StartMove();
+        if (platform.gameElement != null)
         {
             platform.gameElement.isStationary = false;
         }
@@ -101,7 +102,6 @@ public class Belt : MonoBehaviour
         }
 
         platform.position = new Vector2Int(Mathf.FloorToInt(Path[Path.Length - 1].position.x - 0.5f), Mathf.FloorToInt(Path[Path.Length - 1].position.y - 0.5f));
-        platform.Moved();
 
         if (platform.gameElement != null)
         {
@@ -109,5 +109,6 @@ public class Belt : MonoBehaviour
         }
         platform.isStationary = true;
         _isMoving = false;
+        platform.Moved();
     }
 }

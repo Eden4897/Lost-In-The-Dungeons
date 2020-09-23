@@ -18,7 +18,13 @@ public class Platform : MonoBehaviour
 
         position = new Vector2Int(Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.y));
     }
-
+    public void StartMove()
+    {
+        if (gameElement != null)
+        {
+            gameElement.OnStartMove();
+        }
+    }
     public void Moved()
     {
         if(player != null)
@@ -28,6 +34,7 @@ public class Platform : MonoBehaviour
         if (gameElement != null)
         {
             gameElement.position = position;
+            gameElement.OnMoved();
         }
     }
 }

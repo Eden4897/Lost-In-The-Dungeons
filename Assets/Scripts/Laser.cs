@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public struct LaserSprites
+public class Laser : GameElement
 {
+    [SerializeField] private Direction direction;
     [SerializeField] public Sprite horizontalBeam;
     [SerializeField] public Sprite verticalBeam;
 
@@ -26,38 +26,36 @@ public struct LaserSprites
     [SerializeField] public Sprite upRight;
     [SerializeField] public Sprite downRight;
     [SerializeField] public Sprite downLeft;
-}
-public class Laser : GameElement
-{
-    [SerializeField] private Direction direction;
-    [SerializeField] private LaserSprites laserSprites;
     [SerializeField] private GameObject laserTemplate;
 
     private List<GameObject> laserBeams = new List<GameObject>();
     private bool isLaserCasted = false;
+    private Detector currentDetector = null;
+    private List<Mirror> reflectingMirrors = new List<Mirror>();
 
-    
+    public int running = 0;
+
+
     protected override void Start()
     {
         base.Start();
+        grid.lasers.Add(this);
+        StartCoroutine(LaserCast());
     }
 
-    protected override void Update()
+    public override void OnStartMove()
     {
-        base.Update();
-        if (!isStationary && isLaserCasted)
-        {
-            ClearAll();
-            isLaserCasted = false;
-        }
-        else if (isStationary && !isLaserCasted)
-        {
-            StartCoroutine(LaserCast());
-            isLaserCasted = true;
-        }
+        base.OnStartMove();
+        ClearAll();
     }
 
-    private IEnumerator LaserCast()
+    public override void OnMoved()
+    {
+        base.OnMoved();
+        StartCoroutine(LaserCast());
+    }
+
+    public IEnumerator LaserCast()
     {
         ClearAll();
 
@@ -82,7 +80,6 @@ public class Laser : GameElement
                 SpriteRenderer spriteRenderer = newLaser.GetComponent<SpriteRenderer>();
                 if (lastDirection != Direction.Null) //reflected beam
                 {
-                    Debug.Log("Reflected then end");
                     spriteRenderer.sprite = GetReflectedEnd(Reverse(lastDirection), currentDir);
                 }
                 else //normal beam
@@ -91,7 +88,28 @@ public class Laser : GameElement
                 }
                 break;
             }
-            else if(grid.GetMirror(target)) //if mirror ahead
+            else if(grid.GetBox(target) != null)
+            {
+                //Destroy last beam
+                Destroy(laserBeams[laserBeams.Count - 1]);
+                laserBeams.RemoveAt(laserBeams.Count - 1);
+
+                //change beam to end
+                GameObject newLaser = Instantiate(laserTemplate, (Vector3Int)lastPos + new Vector3(0.5f, 0.5f), Quaternion.identity, transform);
+                laserBeams.Add(newLaser);
+                SpriteRenderer spriteRenderer = newLaser.GetComponent<SpriteRenderer>();
+                if (lastDirection != Direction.Null) //reflected beam
+                {
+                    spriteRenderer.sprite = GetReflectedEnd(Reverse(lastDirection), currentDir);
+                }
+                else //normal beam
+                {
+                    spriteRenderer.sprite = GetEnd(currentDir);
+                }
+                grid.GetBox(target).Cast(this);
+                break;
+            }
+            else if(grid.GetMirror(target) != null) //if mirror ahead
             {
                 //check if need to reflect or wrong side
                 Mirror mirror = grid.GetMirror(target);
@@ -104,20 +122,19 @@ public class Laser : GameElement
                     SpriteRenderer spriteRenderer = newLaser.GetComponent<SpriteRenderer>();
                     spriteRenderer.sprite = GetReflectedBeam(Reverse(currentDir), reflection);
 
-                    Debug.Log(newLaser.GetComponent<SpriteRenderer>().sprite.name);
-
                     lastDirection = currentDir;
                     lastPos = target;
                     currentDir = reflection;
                     increment = DirectionToVector(currentDir);
+
+                    mirror.Cast(this);
+                    reflectingMirrors.Add(mirror);
                 }
                 else //if hitting wrong side
                 {
-                    //Destroy last beam
-                    if(laserBeams.Count == 0)
-                    {
-                        break;
-                    }
+                    if (laserBeams.Count == 0) break;
+
+                    //destroy last beam
                     Destroy(laserBeams[laserBeams.Count - 1]);
                     laserBeams.RemoveAt(laserBeams.Count - 1);
 
@@ -128,7 +145,38 @@ public class Laser : GameElement
                     if (lastDirection != Direction.Null) //reflected beam
                     {
                         spriteRenderer.sprite = GetReflectedEnd(Reverse(lastDirection), currentDir);
-                        Debug.Log($"{Reverse(lastDirection)}, {currentDir}");
+                    }
+                    else //normal beam
+                    {
+                        spriteRenderer.sprite = GetEnd(currentDir);
+                    }
+                    break;
+                }
+            }
+            else if (grid.GetDetector(target) != null)
+            {
+                Detector detector = grid.GetDetector(target);
+                if (detector.Detect(currentDir))
+                {
+                    detector.Cast(this);
+                    currentDetector = detector;
+                    break;
+                }
+                else //if hitting wrong side
+                {
+                    if (laserBeams.Count == 0) break;
+
+                    //destroy last beam
+                    Destroy(laserBeams[laserBeams.Count - 1]);
+                    laserBeams.RemoveAt(laserBeams.Count - 1);
+
+                    //change beam to end
+                    GameObject newLaser = Instantiate(laserTemplate, (Vector3Int)lastPos + new Vector3(0.5f, 0.5f), Quaternion.identity, transform);
+                    laserBeams.Add(newLaser);
+                    SpriteRenderer spriteRenderer = newLaser.GetComponent<SpriteRenderer>();
+                    if (lastDirection != Direction.Null) //reflected beam
+                    {
+                        spriteRenderer.sprite = GetReflectedEnd(Reverse(lastDirection), currentDir);
                     }
                     else //normal beam
                     {
@@ -143,22 +191,30 @@ public class Laser : GameElement
                 laserBeams.Add(newLaser);
                 SpriteRenderer spriteRenderer = newLaser.GetComponent<SpriteRenderer>();
 
-                if((int)currentDir <= 1)spriteRenderer.sprite = laserSprites.verticalBeam;
-                else spriteRenderer.sprite = laserSprites.horizontalBeam;
+                if((int)currentDir <= 1)spriteRenderer.sprite = verticalBeam;
+                else spriteRenderer.sprite = horizontalBeam;
 
                 lastPos = target;
                 lastDirection = Direction.Null;
             }
+            //yield return null;
         }
         yield return null;
     }
 
-    private void ClearAll()
+    #region Utility
+    public void ClearAll()
     {
         foreach (GameObject laserBeam in laserBeams)
         {
             Destroy(laserBeam);
         }
+        if(currentDetector != null)
+        {
+            currentDetector.DeCast();
+            currentDetector = null;
+        }
+        reflectingMirrors.Clear();
         laserBeams.Clear();
     }
 
@@ -183,13 +239,13 @@ public class Laser : GameElement
         switch (direction)
         {
             case Direction.Up:
-                return laserSprites.upEnd;
+                return upEnd;
             case Direction.Down:
-                return laserSprites.downEnd;
+                return downEnd;
             case Direction.Left:
-                return laserSprites.leftEnd;
+                return leftEnd;
             case Direction.Right:
-                return laserSprites.rightEnd;
+                return rightEnd;
         }
         return null;
     }
@@ -198,35 +254,35 @@ public class Laser : GameElement
     {
         if(incident == Direction.Up && reflected == Direction.Left)
         {
-            return laserSprites.upLeft;
+            return upLeft;
         }
         else if (incident == Direction.Left && reflected == Direction.Up)
         {
-            return laserSprites.upLeft;
+            return upLeft;
         }
         else if (incident == Direction.Up && reflected == Direction.Right)
         {
-            return laserSprites.upRight;
+            return upRight;
         }
         else if (incident == Direction.Right && reflected == Direction.Up)
         {
-            return laserSprites.upRight;
+            return upRight;
         }
         else if (incident == Direction.Down && reflected == Direction.Left)
         {
-            return laserSprites.downLeft;
+            return downLeft;
         }
         else if (incident == Direction.Left && reflected == Direction.Down)
         {
-            return laserSprites.downLeft;
+            return downLeft;
         }
         else if (incident == Direction.Down && reflected == Direction.Right)
         {
-            return laserSprites.downRight;
+            return downRight;
         }
         else if (incident == Direction.Right && reflected == Direction.Down)
         {
-            return laserSprites.downRight;
+            return downRight;
         }
         return null;
     }
@@ -235,36 +291,37 @@ public class Laser : GameElement
     {
         if (incident == Direction.Up && reflected == Direction.Left)
         {
-            return laserSprites.upLeftEnd;
+            return upLeftEnd;
         }
         else if (incident == Direction.Left && reflected == Direction.Up)
         {
-            return laserSprites.upEndLeft;
+            return upEndLeft;
         }
         else if (incident == Direction.Up && reflected == Direction.Right)
         {
-            return laserSprites.upRightEnd;
+            return upRightEnd;
         }
         else if (incident == Direction.Right && reflected == Direction.Up)
         {
-            return laserSprites.upEndRight;
+            return upEndRight;
         }
         else if (incident == Direction.Down && reflected == Direction.Left)
         {
-            return laserSprites.downLeftEnd;
+            return downLeftEnd;
         }
         else if (incident == Direction.Left && reflected == Direction.Down)
         {
-            return laserSprites.downEndLeft;
+            return downEndLeft;
         }
         else if (incident == Direction.Down && reflected == Direction.Right)
         {
-            return laserSprites.downRightEnd;
+            return downRightEnd;
         }
         else if (incident == Direction.Right && reflected == Direction.Down)
         {
-            return laserSprites.downEndRight;
+            return downEndRight;
         }
         return null;
     }
+    #endregion
 }

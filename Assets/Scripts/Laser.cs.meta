@@ -4,16 +4,42 @@ MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
-  - horizontalBeam: {fileID: 2005025522316488100, guid: 121b670029e1d3b4a8523f3d1b1eb380,
+  - horizontalBeam: {fileID: 1346375082609579787, guid: 755684b8b472fb74f909ca5baa3f0b57,
       type: 3}
-  - verticalBeam: {fileID: 6758930158530883385, guid: 2f4c44bc19aad8e409cc7a6f69432d28,
+  - verticalBeam: {fileID: 9196244716786501259, guid: 755684b8b472fb74f909ca5baa3f0b57,
       type: 3}
-  - upEnd: {fileID: 9184656675476769210, guid: 6766f562c071417419bdb0346cdd4d05, type: 3}
-  - downEnd: {fileID: 8730853500352825570, guid: 393f4e29cd35d7648b6866de624ab869,
+  - upEnd: {fileID: 4855754407071073182, guid: 755684b8b472fb74f909ca5baa3f0b57, type: 3}
+  - downEnd: {fileID: -1938941497154573400, guid: 755684b8b472fb74f909ca5baa3f0b57,
       type: 3}
-  - leftEnd: {fileID: 2507120412696857412, guid: 0ffd2f319a55ba34ab9769d834b4083e,
+  - leftEnd: {fileID: 687083216074585558, guid: 755684b8b472fb74f909ca5baa3f0b57,
       type: 3}
-  - rightEnd: {fileID: 2323470010124258417, guid: f414043b5cbaa8e428171ed57aebb31d,
+  - rightEnd: {fileID: -359991648648363980, guid: 755684b8b472fb74f909ca5baa3f0b57,
+      type: 3}
+  - upEndLeft: {fileID: -6332700999170963394, guid: 755684b8b472fb74f909ca5baa3f0b57,
+      type: 3}
+  - upLeftEnd: {fileID: 5302864011239774578, guid: 755684b8b472fb74f909ca5baa3f0b57,
+      type: 3}
+  - upEndRight: {fileID: 4653732050837652890, guid: 755684b8b472fb74f909ca5baa3f0b57,
+      type: 3}
+  - upRightEnd: {fileID: -166155233924403638, guid: 755684b8b472fb74f909ca5baa3f0b57,
+      type: 3}
+  - downEndLeft: {fileID: -7738320086247409096, guid: 755684b8b472fb74f909ca5baa3f0b57,
+      type: 3}
+  - downLeftEnd: {fileID: 6494061324583707573, guid: 755684b8b472fb74f909ca5baa3f0b57,
+      type: 3}
+  - downEndRight: {fileID: 4107729672538619459, guid: 755684b8b472fb74f909ca5baa3f0b57,
+      type: 3}
+  - downRightEnd: {fileID: 1132993626693343111, guid: 755684b8b472fb74f909ca5baa3f0b57,
+      type: 3}
+  - upLeft: {fileID: 3996953160709046330, guid: 755684b8b472fb74f909ca5baa3f0b57,
+      type: 3}
+  - upRight: {fileID: 2383468070395975469, guid: 755684b8b472fb74f909ca5baa3f0b57,
+      type: 3}
+  - downRight: {fileID: 3813332098980809883, guid: 755684b8b472fb74f909ca5baa3f0b57,
+      type: 3}
+  - downLeft: {fileID: -8700935650976125702, guid: 755684b8b472fb74f909ca5baa3f0b57,
+      type: 3}
+  - laserTemplate: {fileID: 6758930158530883385, guid: 2f4c44bc19aad8e409cc7a6f69432d28,
       type: 3}
   executionOrder: 0
   icon: {instanceID: 0}

@@ -25,6 +25,9 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public List<Platform> platforms = new List<Platform>();
     [HideInInspector] public List<FallingPlatform> fallingPlatforms = new List<FallingPlatform>();
     [HideInInspector] public List<Mirror> mirrors = new List<Mirror>();
+    [HideInInspector] public List<Detector> detectors = new List<Detector>();
+    [HideInInspector] public List<Laser> lasers = new List<Laser>();
+    [HideInInspector] public List<Box> boxes = new List<Box>();
 
     [HideInInspector] public List<Vector2Int> targetTiles = new List<Vector2Int>();
 
@@ -90,11 +93,90 @@ public class GameManager : MonoBehaviour
 
     public bool IsWalkable(Vector2Int pos)
     {
+        if (GetBox(pos) != null) return false;
+        if (GetLaser(pos) != null) return false;
+        if (GetMirror(pos) != null) return false;
+        if (GetDetector(pos) != null) return false;
+        if (walls.Contains(pos)) return false;
+
         if (tiles.Contains(pos)) return true;
         if (GetPlatform(pos) != null) return true;
         if (GetFallingPlatform(pos) != null) return true;
         return false;
     }
+
+    public bool IsPushable(Vector2Int pos, GameElement.Direction dir)
+    {
+        Vector2Int force = Vector2Int.zero;
+        switch (dir)
+        {
+            case GameElement.Direction.Up:
+                force = Vector2Int.up;
+                break;
+            case GameElement.Direction.Down:
+                force = Vector2Int.down;
+                break;
+            case GameElement.Direction.Left:
+                force = Vector2Int.left;
+                break;
+            case GameElement.Direction.Right:
+                force = Vector2Int.right;
+                break;
+        }
+        if(GetMirror(pos) != null || GetBox(pos) != null)
+        {
+            if (walls.Contains(pos + force)) return false;
+            if (GetPlatform(pos + force) != null) return true;
+            if (GetFallingPlatform(pos + force) != null) return true;
+            if (tiles.Contains(pos + force)) return true;
+            if (GetMirror(pos + force) != null || GetBox(pos + force) != null)
+            {
+                return IsPushable(pos + force, dir);
+            }
+            return false;
+        }
+        return false;
+    }
+
+    public GameElement[] GetPushTargets(Vector2Int pos, GameElement.Direction dir)
+    {
+        List<GameElement> output = new List<GameElement>();
+        Vector2Int force = Vector2Int.zero;
+        switch (dir)
+        {
+            case GameElement.Direction.Up:
+                force = Vector2Int.up;
+                break;
+            case GameElement.Direction.Down:
+                force = Vector2Int.down;
+                break;
+            case GameElement.Direction.Left:
+                force = Vector2Int.left;
+                break;
+            case GameElement.Direction.Right:
+                force = Vector2Int.right;
+                break;
+        }
+        Vector2Int target = pos;
+        while (true)
+        {
+            Mirror mirror = GetMirror(target);
+            Box box = GetBox(target);
+            if (mirror != null)
+            {
+                output.Add(mirror);
+            }
+            else if(box != null)
+            {
+                output.Add(box);
+            }
+            else break;
+            target += force;
+        }
+        return output.ToArray();
+    }
+
+    #region Get Methods
 
     public Platform GetPlatform(Vector2Int pos)
     {
@@ -156,6 +238,44 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
+    public Detector GetDetector(Vector2 pos)
+    {
+        foreach (Detector detector in detectors)
+        {
+            if (detector.position == pos && detector.isStationary)
+            {
+                return detector;
+            }
+        }
+        return null;
+    }
+
+    public Laser GetLaser(Vector2Int pos)
+    {
+        foreach(Laser laser in lasers)
+        {
+            if(laser.position == pos && laser.isStationary)
+            {
+                return laser;
+            }
+        }
+        return null;
+    }
+
+    public Box GetBox(Vector2Int pos)
+    {
+        foreach (Box box in boxes)
+        {
+            if(box.position == pos && box.isStationary)
+            {
+                return box;
+            }
+        }
+        return null;
+    }
+    #endregion
+
+    #region Scene Related Methods
     public void NextLevel()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
@@ -169,4 +289,5 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
+    #endregion
 }

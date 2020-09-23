@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class Player : GameElement
@@ -28,7 +29,7 @@ public class Player : GameElement
     {
         transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.y);
     }
-    public IEnumerator Move(Vector3 target)
+    public IEnumerator Move(Vector3 target, Action endEvent = null)
     {
         //premove
         target.z = target.y;
@@ -86,11 +87,16 @@ public class Player : GameElement
             currentPlate = plate;
             currentPlate.Step();
         }
+        endEvent?.Invoke();
+        Debug.Log(grid.lasers.Count);
+        foreach (Laser laser in grid.lasers)
+        {
+            StartCoroutine(laser.LaserCast());
+        }
     }
 
     protected override void OnCollisionEnter2D(Collision2D collider)
     {
-        Debug.Log("Bump");
         if (collider.gameObject.CompareTag("Collectables"))
         {
             grid.activeCollectables--;
