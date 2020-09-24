@@ -57,12 +57,12 @@ TagManager:
   - name: GameElements
     uniqueID: 973839049
     locked: 0
-  - name: Lasers
-    uniqueID: 122918083
-    locked: 0
   - name: Collectables
     uniqueID: 3993030095
     locked: 0
   - name: Player
     uniqueID: 2232999269
+    locked: 0
+  - name: Lasers
+    uniqueID: 122918083
     locked: 0

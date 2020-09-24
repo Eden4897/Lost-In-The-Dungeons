@@ -5,7 +5,6 @@ using UnityEngine.Tilemaps;
 
 public class MovementManager : MonoBehaviour
 {
-    [SerializeField] private Tilemap tm;
     [SerializeField] private Player boy;
     [SerializeField] private Player girl;
 
@@ -19,6 +18,7 @@ public class MovementManager : MonoBehaviour
     }
     private void Update()
     {
+        if (grid.isGamePaused) return;
         #region Switching players
         if (Input.GetKeyDown(KeyCode.Tab))
         {
@@ -106,7 +106,8 @@ public class MovementManager : MonoBehaviour
                 foreach (GameElement gameElement in gameElements)
                 {
                     gameElement.transform.parent = player.transform;
-
+                    gameElement.OnStartMove();
+                    gameElement.OnStartPush();
                 }
                 StartCoroutine(player.Move(player.transform.position + (Vector3Int)force, () =>
                 {
@@ -114,6 +115,15 @@ public class MovementManager : MonoBehaviour
                     {
                         gameElement.transform.parent = null;
                         gameElement.position = gameElement.position + force;
+                        gameElement.OnMoved();
+                        gameElement.OnPushed();
+                        Platform platform = grid.GetPlatform(gameElement.position);
+                        if (platform != null)
+                        {
+                            gameElement.transform.parent = platform.transform;
+                            platform.gameElements.Add(gameElement);
+                            gameElement.currentPlatform = platform;
+                        }
                     }
                 }));
                 player.animator.Play(animationName);

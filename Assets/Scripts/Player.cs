@@ -15,15 +15,19 @@ public class Player : GameElement
     [HideInInspector] public SpriteRenderer spriteRenderer;
     [HideInInspector] public Animator animator;
 
-    private PressurePlate currentPlate = null;
     private Platform currenPlatform = null;
     private FallingPlatform currenFallingPlatform = null;
+    private AudioClip walking;
+    private AudioClip coin;
 
     protected override void Start()
     {
         base.Start();
+        position = new Vector2Int(Mathf.RoundToInt(transform.position.x - 0.5f), Mathf.RoundToInt(transform.position.y - 1f));
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+        walking = Resources.Load<AudioClip>("Audio/Walking");
+        coin = Resources.Load<AudioClip>("Audio/Coin");
     }
     protected override void Update()
     {
@@ -32,6 +36,7 @@ public class Player : GameElement
     public IEnumerator Move(Vector3 target, Action endEvent = null)
     {
         //premove
+        AudioManager.instance.PlaySound(walking);
         target.z = target.y;
         transform.parent = null;
         _isMoving = true;
@@ -88,7 +93,6 @@ public class Player : GameElement
             currentPlate.Step();
         }
         endEvent?.Invoke();
-        Debug.Log(grid.lasers.Count);
         foreach (Laser laser in grid.lasers)
         {
             StartCoroutine(laser.LaserCast());
@@ -99,9 +103,9 @@ public class Player : GameElement
     {
         if (collider.gameObject.CompareTag("Collectables"))
         {
+            AudioManager.instance.PlaySound(coin);
             grid.activeCollectables--;
-            Destroy(collider.gameObject);
-            //play sound
+            Destroy(collider.gameObject);            
         }
     }
 }

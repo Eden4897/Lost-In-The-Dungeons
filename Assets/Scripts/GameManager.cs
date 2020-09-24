@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Player[] players;
     [SerializeField] private GameObject winScreen;
     [SerializeField] private GameObject reloadScreen;
+    [SerializeField] private GameObject pauseScreen;
 
     //visualised info
     [SerializeField] public List<Vector2Int> walls = new List<Vector2Int>();
@@ -31,7 +32,9 @@ public class GameManager : MonoBehaviour
 
     [HideInInspector] public List<Vector2Int> targetTiles = new List<Vector2Int>();
 
-    public int activeCollectables = 0;
+    [HideInInspector] public int activeCollectables = 0;
+    [HideInInspector] public bool isGamePaused = false;
+
 
     private void Awake()
     {
@@ -75,6 +78,17 @@ public class GameManager : MonoBehaviour
         {
             reloadScreen.SetActive(true);
             Invoke("ReloadScene", 0.5f);
+        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (isGamePaused)
+            {
+                Resume();
+            }
+            else
+            {
+                Pause();
+            }
         }
         if (activeCollectables <= 0)
         {
@@ -126,13 +140,19 @@ public class GameManager : MonoBehaviour
         if(GetMirror(pos) != null || GetBox(pos) != null)
         {
             if (walls.Contains(pos + force)) return false;
-            if (GetPlatform(pos + force) != null) return true;
-            if (GetFallingPlatform(pos + force) != null) return true;
-            if (tiles.Contains(pos + force)) return true;
+            if (GetDetector(pos + force) != null) return false;
+            if (GetLaser(pos + force) != null) return false;
+
             if (GetMirror(pos + force) != null || GetBox(pos + force) != null)
             {
                 return IsPushable(pos + force, dir);
             }
+
+            if (GetPlatform(pos + force) != null) return true;
+            if (GetFallingPlatform(pos + force) != null) return true;
+            if (tiles.Contains(pos + force)) return true;
+
+            
             return false;
         }
         return false;
@@ -278,16 +298,40 @@ public class GameManager : MonoBehaviour
     #region Scene Related Methods
     public void NextLevel()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
     public void LoadScene(string name)
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene(name);
     }
 
     private void ReloadScene()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void Pause()
+    {
+        pauseScreen.SetActive(true);
+        pauseScreen.GetComponent<Animator>().Play("PauseAppear");
+        Time.timeScale = 0f;
+        isGamePaused = true;
+    }
+
+    public void Resume()
+    {
+        pauseScreen.GetComponent<Animator>().Play("PauseDisappear");
+        StartCoroutine(DisablePause());
+    }
+    private IEnumerator DisablePause()
+    {
+        yield return new WaitForSecondsRealtime(1f);
+        pauseScreen.SetActive(false);
+        Time.timeScale = 1f;
+        isGamePaused = false;
     }
     #endregion
 }

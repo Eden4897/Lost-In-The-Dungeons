@@ -26,11 +26,36 @@ public class Mirror : GameElement
     public override void OnMoved()
     {
         base.OnMoved();
-        for(int i = 0; i < currentLasers.Count; ++i)
+        transform.parent = null;
+        if (currentPlatform != null)
+        {
+            currentPlatform.gameElements.Remove(this);
+        }
+        if(currentPlate != null)
+        {
+            currentPlate.Release();
+        }
+        currentPlatform = null;
+        currentPlate = null;
+        for (int i = 0; i < currentLasers.Count; ++i)
         {
             StartCoroutine(currentLasers[i].LaserCast());
         }
         currentLasers.Clear();
+        Platform platform = grid.GetPlatform(position);
+        if (platform != null)
+        {
+            transform.parent = platform.transform;
+            platform.gameElements.Add(this);
+            currentPlatform = platform;
+        }
+
+        PressurePlate plate = grid.GetPlate(position);
+        if (plate != null)
+        {
+            plate.Step();
+            currentPlate = plate;
+        }
     }
 
     public Direction Reflect(Direction dir)

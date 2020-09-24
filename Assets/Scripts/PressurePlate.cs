@@ -9,16 +9,22 @@ public class PressurePlate : GameElement
     [SerializeField] private Sprite steppedSprite;
     [SerializeField] private Sprite releasedSprite;
 
+    private AudioClip down;
+    private AudioClip up;
+
     private int _occupants;
 
     protected override void Start()
     {
         base.Start();
         grid.pressurePlates.Add(this);
+        down = Resources.Load<AudioClip>("Audio/PressurePlateDown");
+        up = Resources.Load<AudioClip>("Audio/PressurePlateUp");
     }
 
     public void Step()
     {
+        AudioManager.instance.PlaySound(down);
         _occupants++;
         if (_occupants == 1)
         {
@@ -28,6 +34,7 @@ public class PressurePlate : GameElement
     }
     public void Release()
     {
+        AudioManager.instance.PlaySound(up);
         _occupants--;
         if (_occupants == 0)
         {

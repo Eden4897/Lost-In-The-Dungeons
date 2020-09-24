@@ -10,6 +10,7 @@ public class FallingPlatform : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
     private GameManager grid;
+    private AudioClip crackingEffect;
 
     private void Start()
     {
@@ -18,9 +19,11 @@ public class FallingPlatform : MonoBehaviour
         grid = GameManager.instance;
         grid.fallingPlatforms.Add(this);
         spriteRenderer = GetComponent<SpriteRenderer>();
+        crackingEffect = Resources.Load<AudioClip>("Audio/Cracking");
     }
     public void Damage()
     {
+        AudioManager.instance.PlaySound(crackingEffect);
         state--;
         if(state == 1)
         {

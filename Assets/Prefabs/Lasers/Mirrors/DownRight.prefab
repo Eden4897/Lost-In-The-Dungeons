@@ -70,7 +70,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 973839049
   m_SortingLayer: 5
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 6110325177556236637, guid: bba94840d2cc7954ebdf53c19fc582e8,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -97,7 +97,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isStationary: 1
   position: {x: 0, y: 0}
+  isPushable: 0
+  currentPlatform: {fileID: 0}
+  currentPlate: {fileID: 0}
   directions: 0200000000000000
-  normal: {fileID: -5493370587825077116, guid: bba94840d2cc7954ebdf53c19fc582e8, type: 3}
-  reflecting: {fileID: 6110325177556236637, guid: bba94840d2cc7954ebdf53c19fc582e8,
-    type: 3}
+  currentLasers: []

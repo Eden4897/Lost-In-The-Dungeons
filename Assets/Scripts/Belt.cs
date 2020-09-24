@@ -7,7 +7,7 @@ public class Belt : MonoBehaviour
 {
     [SerializeField] private Transform[] beltNodes;
     [SerializeField] private Platform platform;
-    [SerializeField] List<Transform> Path = new List<Transform>();
+    private List<Transform> Path = new List<Transform>();
 
     private Transform currentNode;
     private float speed = 5;
@@ -15,8 +15,8 @@ public class Belt : MonoBehaviour
     private bool _isMoving = false;
 
     //calculations
-    [SerializeField] private Vector2 _start;
-    [SerializeField] private Vector2 _end;
+    private Vector2 _start;
+    private Vector2 _end;
     private float _distance;
     private float _time = 0;
 
@@ -27,10 +27,6 @@ public class Belt : MonoBehaviour
     }
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Move();
-        }
         _time += Time.deltaTime;
         platform.transform.position = Vector2.Lerp(_start, _end, _time / _distance * speed);
     }
@@ -79,9 +75,9 @@ public class Belt : MonoBehaviour
     private IEnumerator MoveRoutine(Transform[] Path)
     {
         platform.StartMove();
-        if (platform.gameElement != null)
+        foreach(GameElement gameElement in platform.gameElements)
         {
-            platform.gameElement.isStationary = false;
+            gameElement.isStationary = false;
         }
         platform.isStationary = false;
         _isMoving = true;
@@ -103,9 +99,9 @@ public class Belt : MonoBehaviour
 
         platform.position = new Vector2Int(Mathf.FloorToInt(Path[Path.Length - 1].position.x - 0.5f), Mathf.FloorToInt(Path[Path.Length - 1].position.y - 0.5f));
 
-        if (platform.gameElement != null)
+        foreach (GameElement gameElement in platform.gameElements)
         {
-            platform.gameElement.isStationary = true;
+            gameElement.isStationary = true;
         }
         platform.isStationary = true;
         _isMoving = false;
