@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Lever : GameElement
 {
-    [SerializeField] private Belt linkedBelt;
+    [SerializeField] private Belt[] linkedBelts;
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Sprite onSprite;
     [SerializeField] private Sprite offSprite;
@@ -31,6 +31,9 @@ public class Lever : GameElement
             spriteRenderer.sprite = onSprite;
         }
         isOn = !isOn;
-        linkedBelt.Move();
+        foreach (Belt linkedBelt in linkedBelts)
+        {
+            linkedBelt.Move();
+        }
     }
 }

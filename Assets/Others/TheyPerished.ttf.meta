@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: cd3c7279e34699c47ad0d15eb3b6ce76
+guid: 2e135c18a7e1d7c43bc8f6302f08ca80
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -8,9 +8,9 @@ TrueTypeFontImporter:
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
-  fontName: Number9
+  fontName: They Perished
   fontNames:
-  - Number9
+  - They Perished
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

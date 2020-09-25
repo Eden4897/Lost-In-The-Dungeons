@@ -28,6 +28,11 @@ public class MenuManager : MonoBehaviour
         SceneManager.LoadScene(index);
     }
 
+    public void LoadScene(string name)
+    {
+        SceneManager.LoadScene(name);
+    }
+
     public void ToggleTrack()
     {
         AudioManager.instance.SetTrackActive(!AudioManager.instance.isTrackEnabled);
@@ -40,7 +45,6 @@ public class MenuManager : MonoBehaviour
 
     public void OnValueChanged()
     {
-        Debug.Log("Cange");
         AudioManager.instance.SetMax(volumeSlider.value);
     }
 }

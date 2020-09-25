@@ -13,6 +13,8 @@ public class AudioManager : MonoBehaviour
     public bool isTrackEnabled = true;
     public bool isEffectsEnabled = true;
 
+    private float _t = 0;
+
     private void Start()
     {
         if (instance != null)
@@ -32,6 +34,7 @@ public class AudioManager : MonoBehaviour
 
     private void Update()
     {
+        _t += Time.deltaTime;
         if (Input.GetMouseButtonDown(1))
         {
             SceneManager.LoadScene(2);
@@ -40,14 +43,16 @@ public class AudioManager : MonoBehaviour
     // called second
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name == "TitleScreen" || scene.name == "CreditsScreen" || scene.name == "Menu")//title, credits or menu
+        _t = 0;
+        if (scene.name == "TitleScreen" || scene.name == "CreditsScene" || scene.name == "Menu" || scene.name == "LevelSelection")//title, credits or menu
         {
             if (!isFirstSoundTrack)
             {
                 StopAllCoroutines();
+                isFirstSoundTrack = true;
+                if (!isTrackEnabled) return;
                 StartCoroutine(fadeIn(audioSourceTitle));
                 StartCoroutine(fadeOut(audioSourceInGame));
-                isFirstSoundTrack = true;
             }
         }
         else //in game
@@ -55,9 +60,10 @@ public class AudioManager : MonoBehaviour
             if (isFirstSoundTrack)
             {
                 StopAllCoroutines();
+                isFirstSoundTrack = false;
+                if (!isTrackEnabled) return;
                 StartCoroutine(fadeIn(audioSourceInGame));
                 StartCoroutine(fadeOut(audioSourceTitle));
-                isFirstSoundTrack = false;
             }
         }
     }
@@ -104,6 +110,7 @@ public class AudioManager : MonoBehaviour
         if (!isEffectsEnabled) return;
         AudioSource source = gameObject.AddComponent(typeof(AudioSource)) as AudioSource;
         source.clip = audioClip;
+        source.volume = max;
         source.Play();
         StartCoroutine(DeleteSource(source));
     }
@@ -119,6 +126,7 @@ public class AudioManager : MonoBehaviour
 
     public void SetTrackActive(bool state)
     {
+        if (_t <= 0.01) return;
         isTrackEnabled = state;
         if (state)
         {
@@ -134,6 +142,7 @@ public class AudioManager : MonoBehaviour
 
     public void SetEffectsActive(bool state)
     {
+        if (_t <= 0.01) return;
         isEffectsEnabled = state;
     }
 }

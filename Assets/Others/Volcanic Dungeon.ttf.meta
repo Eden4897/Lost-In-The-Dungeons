@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c1412febccb043a4397b5a0954fd4629
+guid: abd068ac7f427ee47b1f305c6f5f90b1
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -8,9 +8,9 @@ TrueTypeFontImporter:
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
-  fontName: CHUCKLESOME
+  fontName: Volcanic Dungeon
   fontNames:
-  - CHUCKLESOME
+  - Volcanic Dungeon
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: e99679007807b134ea4a73165270a1ab
+guid: 3c7843d3ecbfdf147b9a7f6deae980e0
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -8,9 +8,9 @@ TrueTypeFontImporter:
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
-  fontName: Mencran?
+  fontName: Urban Jungle
   fontNames:
-  - Mencran?
+  - Urban Jungle
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

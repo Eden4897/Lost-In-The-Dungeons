@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PressurePlate : GameElement
 {
-    [SerializeField] private Belt linkedBelt;
+    [SerializeField] private Belt[] linkedBelts;
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Sprite steppedSprite;
     [SerializeField] private Sprite releasedSprite;
@@ -29,7 +29,10 @@ public class PressurePlate : GameElement
         if (_occupants == 1)
         {
             spriteRenderer.sprite = steppedSprite;
-            linkedBelt.Move();
+            foreach (Belt linkedBelt in linkedBelts)
+            {
+                linkedBelt.Move();
+            }
         }     
     }
     public void Release()
@@ -39,7 +42,10 @@ public class PressurePlate : GameElement
         if (_occupants == 0)
         {
             spriteRenderer.sprite = releasedSprite;
-            linkedBelt.Move();
+            foreach (Belt linkedBelt in linkedBelts)
+            {
+                linkedBelt.Move();
+            }
         }
     }
 }
